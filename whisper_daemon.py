@@ -28,11 +28,13 @@ AWS_SESSION = boto3.Session(
 
 s3 = AWS_SESSION.client("s3")
 
-WHISPER_MODEL_SIZE = "tiny"
-WHISPER_DEVICE = "cpu"
-WHISPER_COMPUTE_TYPE = "int8"
+WHISPER_MODEL_DIR = "model"
+WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE")
+WHISPER_DEVICE = os.getenv("WHISPER_DEVICE")
+WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE")
+WHISPER_BATCH_SIZE = os.getenv("WHISPER_BATCH_SIZE", "1")
 
-S3_BUCKET = "saeroun-meet"
+S3_BUCKET = os.getenv("S3_BUCKET")
 
 model = None
 
@@ -46,7 +48,8 @@ def init_model():
         model = whisperx.load_model(
             WHISPER_MODEL_SIZE,
             device=WHISPER_DEVICE,
-            compute_type=WHISPER_COMPUTE_TYPE
+            compute_type=WHISPER_COMPUTE_TYPE,
+            download_root=WHISPER_MODEL_DIR
         )
         print("[INFO] Model loaded.")
 
@@ -123,7 +126,7 @@ def process_recording(rec_id):
         download_audio(rec_id, audio_path)
 
         audio = whisperx.load_audio(audio_path)
-        result = model.transcribe(audio, batch_size=1)
+        result = model.transcribe(audio, batch_size=int(WHISPER_BATCH_SIZE))
         segments = result["segments"]
 
         vtt = convert_to_vtt(segments)
@@ -137,7 +140,7 @@ def daemon_loop():
     while True:
         rec_id = get_next_target()
         if not rec_id:
-            time.sleep(5)
+            time.sleep(30)
             continue
 
         try:
