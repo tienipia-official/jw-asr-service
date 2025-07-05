@@ -8,9 +8,9 @@ RUN pip3 install --upgrade pip
 WORKDIR /app
 
 COPY requirements.txt .
-COPY whisper_daemon.py .
-
 RUN pip3 install -r requirements.txt
 RUN mkdir -p model
+
+COPY whisper_daemon.py .
 
 CMD ["python3", "whisper_daemon.py"]
