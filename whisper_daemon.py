@@ -33,6 +33,7 @@ WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE")
 WHISPER_DEVICE = os.getenv("WHISPER_DEVICE")
 WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE")
 WHISPER_BATCH_SIZE = os.getenv("WHISPER_BATCH_SIZE", "1")
+WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "ko")
 
 S3_BUCKET = os.getenv("S3_BUCKET")
 
@@ -126,7 +127,7 @@ def process_recording(rec_id):
         download_audio(rec_id, audio_path)
 
         audio = whisperx.load_audio(audio_path)
-        result = model.transcribe(audio, batch_size=int(WHISPER_BATCH_SIZE))
+        result = model.transcribe(audio, batch_size=int(WHISPER_BATCH_SIZE), language=WHISPER_LANGUAGE, condition_on_previous_text=False)
         segments = result["segments"]
 
         vtt = convert_to_vtt(segments)
