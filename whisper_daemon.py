@@ -37,6 +37,8 @@ WHISPER_LANGUAGE = os.getenv("WHISPER_LANGUAGE", "ko")
 
 S3_BUCKET = os.getenv("S3_BUCKET")
 
+JOB_LOOP_DELAY = os.getenv("JOB_LOOP_DELAY", "30")
+
 model = None
 
 # ----------------------------
@@ -127,7 +129,7 @@ def process_recording(rec_id):
         download_audio(rec_id, audio_path)
 
         audio = whisperx.load_audio(audio_path)
-        result = model.transcribe(audio, batch_size=int(WHISPER_BATCH_SIZE), language=WHISPER_LANGUAGE, condition_on_previous_text=False)
+        result = model.transcribe(audio, batch_size=int(WHISPER_BATCH_SIZE), language=WHISPER_LANGUAGE)
         segments = result["segments"]
 
         vtt = convert_to_vtt(segments)
@@ -141,7 +143,7 @@ def daemon_loop():
     while True:
         rec_id = get_next_target()
         if not rec_id:
-            time.sleep(30)
+            time.sleep(int(JOB_LOOP_DELAY))
             continue
 
         try:
