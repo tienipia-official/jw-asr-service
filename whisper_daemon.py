@@ -97,7 +97,7 @@ def update_result(rec_id, status, webvtt=None, error=None):
 # 오디오 다운로드
 # ----------------------------
 def download_audio(rec_id, dest_path):
-    s3_key = f"{rec_id}/audio.m4a"
+    s3_key = f"meets/{rec_id}/audio.m4a"
     s3.download_file(S3_BUCKET, s3_key, dest_path)
 
 # ----------------------------
