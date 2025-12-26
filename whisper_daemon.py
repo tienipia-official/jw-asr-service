@@ -52,7 +52,8 @@ def init_model():
             WHISPER_MODEL_SIZE,
             device=WHISPER_DEVICE,
             compute_type=WHISPER_COMPUTE_TYPE,
-            download_root=WHISPER_MODEL_DIR
+            download_root=WHISPER_MODEL_DIR,
+            vad_method="silero"
         )
         print("[INFO] Model loaded.")
 

@@ -1,4 +1,4 @@
-whisperx==3.4.2
+whisperx==3.7.4
 psycopg2-binary
 requests
 boto3
